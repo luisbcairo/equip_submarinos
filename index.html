@@ -12,7 +12,7 @@ h2{font-size:22px;margin:8px 0 4px}h3{font-size:16px;margin:16px 0 6px;color:var
 .lead{color:var(--mut);margin:0 0 12px;font-size:14.5px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin:10px 0}
 .grid{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
-.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.row{display:flex;gap:8px 10px;flex-wrap:wrap;align-items:center;margin:8px 0}
 .btn{border:1px solid var(--line);background:var(--card2);color:var(--tx);padding:8px 12px;border-radius:10px;font-size:13px;cursor:pointer}
 .btn:hover{border-color:var(--acc)}.btn.on{background:var(--acc);color:#04201c;border-color:var(--acc);font-weight:700}
 .btn.warn{border-color:var(--bad);color:#fecaca}.btn.warn.on{background:var(--bad);color:#fff}
@@ -97,6 +97,42 @@ nav.chips #cp button.seen::before{content:'✓ ';color:var(--acc)}
 .mod h3{margin:0 0 4px;font-size:16px}
 .bar{height:8px;border-radius:6px;background:rgba(127,127,127,.25);overflow:hidden;margin:6px 0}
 .bar i{display:block;height:100%;background:var(--acc)}
+/* esquemático */
+.qroot .chip{background:var(--card2);border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:12.5px;cursor:pointer;color:var(--tx);font-family:inherit}
+.qroot .chip.on{box-shadow:inset 0 0 0 2px currentColor;font-weight:700}
+.qstage{overflow-x:auto;background:linear-gradient(180deg,#0e2a47,#0a2036 40%,#071524);border:1px solid var(--line);border-radius:14px;overflow:hidden;position:relative;margin-top:6px}
+.qstage svg{display:block;width:100%;min-width:860px;height:auto}
+.qpanel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-top:12px}
+.qpanel h2{margin:0 0 2px;font-size:19px}.qnm{color:var(--mut);font-size:13px;margin-bottom:8px}
+.qpanel h3{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--acc);margin:12px 0 3px}.qpanel p{margin:0;font-size:14px}
+.qtag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:999px;margin:0 4px 4px 0;border:1px solid}
+.qwarn{border-left:3px solid #ffb454;background:rgba(255,180,84,.12);padding:6px 9px;border-radius:6px;font-size:13px;margin-top:10px}
+.qeq{cursor:pointer;transition:opacity .2s}
+.qeq:hover .qshape:not([fill="none"]){stroke:#fff;stroke-width:2.5}
+.qeq:hover .qshape[fill="none"],.qeq.qsel .qshape[fill="none"],.qhl .qshape[fill="none"]{stroke-width:8;filter:drop-shadow(0 0 4px #fff)}
+.qeq:focus{outline:none}
+.qeq.qsel .qshape:not([fill="none"]){stroke:#fff;stroke-width:3}
+.qdim{opacity:.18}
+.qhl .qshape:not([fill="none"]){stroke:#fff;stroke-width:3}
+.qhl{filter:drop-shadow(0 0 8px rgba(46,196,182,.9))}
+.qlbl{font-size:12px;fill:#e6f0fa;pointer-events:none;font-weight:600}
+.qlbl2{font-size:10px;fill:#b7cbe0;pointer-events:none}
+.qflow{stroke-dasharray:8 8;animation:qfl .9s linear infinite}
+@keyframes qfl{to{stroke-dashoffset:-16}}
+.qsteps{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin-bottom:10px;display:none}
+.qsteps.on{display:block}.qsteps b{color:var(--acc)}
+.qgauge{position:absolute;right:8px;top:8px;background:rgba(11,27,46,.92);color:#e6f0fa;border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-size:12px;display:none;max-width:220px;z-index:2}
+.qgauge.on{display:block}
+
+/* espaçamento padrão entre controles */
+.tabs{margin:10px 0}
+input[type=text],input[type=search],select{margin:6px 0}
+.row>input[type=text],.row>select{margin:0}
+.row+.card,.row+.info,.tabs+.card,.tabs+.info{margin-top:10px}
+.btn{line-height:1.25}
+/* diagramas: tamanho máximo em telas largas (evita escala exagerada e rótulos sobrepostos) */
+main svg{max-width:780px;margin-left:auto;margin-right:auto}
+.qstage svg{max-width:none}
 header h1{font-size:20px!important;line-height:1.25}header h1 small{display:block;font-size:12px;opacity:.7}</style></head><body>
 <header><div id="tools"></div><h1>Equipamentos Submarinos <small>ANM · BAP · TH · Controle · ROV</small></h1></header>
 <nav class="chips" id="nav"></nav><main id="main"></main>
@@ -125,11 +161,11 @@ function stepper(host,steps,onStep,opts={}){
  play.onclick=()=>{if(playing){stop();return}if(cur>=steps.length-1)set(0);play.textContent='⏸ Pausar';playing=every(()=>{if(cur>=steps.length-1){stop();return}set(cur+1)},opts.ms||3200)};
  set(opts.start||0);return {set,stop}}
 // Router
-const GROUPS=[['Comece aqui',['trilha','fund','visao']],['Poço e árvore',['stack','valvulas','bap','th','vh','tcap','pocos']],['Controle e ROV',['ctl','rov','cenarios']],['Linhas e risers',['mani','flex','dutos','riser','garantia']],['Campo e sistemas',['arranjo','modarr','lift','ssp']],['Operação no mar',['inst','emb','oceano']],['Avançado',['riseravc']],['Referência',['glos','atenc','quiz']]];
+const GROUPS=[['Comece aqui',['trilha','fund','visao']],['Poço e árvore',['stack','valvulas','bap','th','vh','tcap','pocos']],['Controle e ROV',['ctl','esquema','rov','cenarios']],['Linhas e risers',['mani','flex','dutos','riser','garantia']],['Campo e sistemas',['arranjo','modarr','lift','ssp']],['Operação no mar',['inst','emb','oceano']],['Avançado',['riseravc']],['Referência',['glos','atenc','quiz']]];
 const FLAT=GROUPS.reduce((a,g)=>a.concat(g[1]),[]);
 const LV={b:['Básico','l1'],i:['Intermediário','l2'],a:['Avançado','l3'],r:['Referência','l4']};
 // id:[nível, "antes de começar"]
-const META={trilha:['b',''],fund:['b','Nenhum: comece por aqui'],visao:['b','Fundamentos'],stack:['b','Visão geral'],valvulas:['b','Stack-up'],bap:['b','Stack-up'],th:['b','BAP, MLF & MCV'],vh:['i','TH, coluna & poço'],tcap:['i','ANM vertical × horizontal'],pocos:['b','Visão geral'],ctl:['i','Válvulas da ANM'],rov:['i','Válvulas da ANM e Controle'],cenarios:['i','ROV na prática'],mani:['i','Visão geral'],flex:['i','Visão geral'],dutos:['i','Manifolds e Dutos flexíveis'],riser:['i','Dutos flexíveis & umbilicais'],garantia:['i','Manifolds'],arranjo:['i','Manifolds e Risers'],modarr:['i','Arranjo & UEPs'],lift:['i','Arranjo & UEPs'],ssp:['a','Elevação, injeção & separação'],inst:['i','Stack-up e Manifolds'],emb:['b','Visão geral'],oceano:['i','Fundamentos'],riseravc:['a','Risers & umbilicais e Oceanografia'],glos:['r',''],atenc:['r',''],quiz:['r','Qualquer módulo']};
+const META={trilha:['b',''],fund:['b','Nenhum: comece por aqui'],visao:['b','Fundamentos'],stack:['b','Visão geral'],valvulas:['b','Stack-up'],bap:['b','Stack-up'],th:['b','BAP, MLF & MCV'],vh:['i','TH, coluna & poço'],tcap:['i','ANM vertical × horizontal'],pocos:['b','Visão geral'],ctl:['i','Válvulas da ANM'],esquema:['i','Controle & atuadores'],rov:['i','Válvulas da ANM e Controle'],cenarios:['i','ROV na prática'],mani:['i','Visão geral'],flex:['i','Visão geral'],dutos:['i','Manifolds e Dutos flexíveis'],riser:['i','Dutos flexíveis & umbilicais'],garantia:['i','Manifolds'],arranjo:['i','Manifolds e Risers'],modarr:['i','Arranjo & UEPs'],lift:['i','Arranjo & UEPs'],ssp:['a','Elevação, injeção & separação'],inst:['i','Stack-up e Manifolds'],emb:['b','Visão geral'],oceano:['i','Fundamentos'],riseravc:['a','Risers & umbilicais e Oceanografia'],glos:['r',''],atenc:['r',''],quiz:['r','Qualquer módulo']};
 function seenGet(){try{return JSON.parse(localStorage.getItem('esSeen')||'[]')}catch(e){return[]}}
 function seenAdd(id){const a=seenGet();if(!a.includes(id)){a.push(id);try{localStorage.setItem('esSeen',JSON.stringify(a))}catch(e){}}}
 function sortCH(){CH.sort((x,y)=>{const a=FLAT.indexOf(x.id),b=FLAT.indexOf(y.id);return (a<0?999:a)-(b<0?999:b)})}
@@ -142,7 +178,7 @@ function markSeen(){const a=seenGet();$$('#cp button').forEach(b=>b.classList.to
 function initTools(){const t=$('#tools');if(!t||t.dataset.ok)return;t.dataset.ok=1;let th='dark',fs=1;try{th=localStorage.getItem('esTheme')||'dark';fs=+localStorage.getItem('esFs')||1}catch(e){}
  const ap=()=>{document.documentElement.dataset.theme=th;$('#main').style.zoom=fs;try{localStorage.setItem('esTheme',th);localStorage.setItem('esFs',fs)}catch(e){}bt.textContent=th==='dark'?'☀ Claro':'🌙 Escuro'};
  const bm=mk('<button class="tb2" title="Diminuir fonte">A−</button>'),bp=mk('<button class="tb2" title="Aumentar fonte">A+</button>'),bt=mk('<button class="tb2"></button>');
- bm.onclick=()=>{fs=Math.max(.85,+(fs-.1).toFixed(2));ap()};bp.onclick=()=>{fs=Math.min(1.5,+(fs+.1).toFixed(2));ap()};bt.onclick=()=>{th=th==='dark'?'light':'dark';ap()};t.append(bm,bp,bt);ap()}
+ bm.onclick=()=>{fs=Math.max(.85,+(fs-.1).toFixed(2));ap()};bp.onclick=()=>{fs=Math.min(1.5,+(fs+.1).toFixed(2));ap()};bt.onclick=()=>{th=th==='dark'?'light':'dark';ap()};const bz=mk('<button class="tb2" title="Zerar progresso">↺ Zerar</button>');let zt=null;bz.onclick=()=>{if(!zt){bz.textContent='Toque de novo para zerar';zt=setTimeout(()=>{zt=null;bz.textContent='↺ Zerar'},3500);return}clearTimeout(zt);zt=null;bz.textContent='↺ Zerar';try{localStorage.removeItem('esSeen')}catch(e){}if(location.hash==='#trilha')route();else location.hash='trilha';markSeen()};t.append(bz,bm,bp,bt);ap()}
 function route(){clearTimers();const id=(location.hash||'#'+CH[0].id).slice(1);const c=CH.find(x=>x.id===id)||CH[0];
  $$('#cp button').forEach(b=>b.classList.toggle('on',b.dataset.id===c.id));showGroup(grpOf(c.id));const m=$('#main');m.innerHTML='';
  m.appendChild(mk('<h2>'+c.title+'</h2>'));const mt=META[c.id];if(mt){const L=LV[mt[0]];m.appendChild(mk('<div class="meta"><span class="lvl '+L[1]+'">'+L[0]+'</span>'+(mt[1]?'<span class="sm">Antes: '+mt[1]+'</span>':'')+'</div>'))}if(c.lead)m.appendChild(mk('<p class="lead">'+c.lead+'</p>'));
@@ -391,7 +427,7 @@ const stat=mk('<div class="card" id="stat"></div>');m.appendChild(stat);m.append
 function glyph(v){const [x,y,o]=POS[v];const s=ST[v];const col=s===0?'#ef4444':s===1?'#22c55e':'#f59e0b';
  const sh=o==='v'?'M-10 -12 L0 0 L10 -12Z M-10 12 L0 0 L10 12Z':'M-12 -10 L0 0 L-12 10Z M12 -10 L0 0 L12 10Z';
  const label=NAME[v].split(' · ')[0];
- return `<g class="hot" data-v="${v}" transform="translate(${x},${y})"><rect x="-22" y="-22" width="44" height="44" fill="transparent"/><path d="${sh}" fill="${col}" stroke="#fff" stroke-width="1.2"/>${(v==='DHSV'||v==='PXO')?'':'<rect x="'+(o==='v'?-3:-3)+'" y="'+(o==='v'?-24:-24)+'" width="6" height="8" fill="#94a3b8"/>'}<text x="${o==='v'?16:-14}" y="${o==='v'?4:-14}" class="tb" style="fill:#fff;font-size:15px">${label}</text>${s===2?'<text x="-8" y="26" style="fill:#fbbf24;font-size:11px">OVERRIDE</text>':''}</g>`}
+ return `<g class="hot" data-v="${v}" transform="translate(${x},${y})"><rect x="-22" y="-22" width="44" height="44" fill="transparent"/><path d="${sh}" fill="${col}" stroke="#fff" stroke-width="1.2"/>${(v==='DHSV'||v==='PXO')?'':'<rect x="'+(o==='v'?-3:-3)+'" y="'+(o==='v'?-24:-24)+'" width="6" height="8" fill="#94a3b8"/>'}<text x="${o==='v'?16:(v==='PXO'?-14:0)}" y="${o==='v'?4:(v==='PXO'?-14:-30)}" ${(o==='h'&&v!=='PXO')?'text-anchor="middle" ':''}class="tb" style="fill:#fff;font-size:15px">${label}</text>${s===2?'<text x="'+(o==='h'?0:-8)+'" y="'+(o==='h'?(v==='PXO'?30:-44):26)+'"'+(o==='h'?' text-anchor="middle"':'')+' style="fill:#fbbf24;font-size:11px">OVERRIDE</text>':''}</g>`}
 function draw(failflash){
  const a=analyze();
  holder.innerHTML=`<svg viewBox="0 0 640 545" style="width:100%;height:auto;display:block">
@@ -429,16 +465,18 @@ tabs(m,[
  <rect x="0" y="372" width="640" height="58" fill="#2a2418"/>
  <rect x="180" y="340" width="260" height="34" fill="#6b7280" stroke="#d1d5db"/><text x="200" y="362" class="tb" style="fill:#fff">cabeça de poço / alojador de alta</text>
  <g class="hot" data-k="conn"><path d="M205 340 L225 305 H395 L415 340Z" fill="#0f766e" stroke="#5eead4"/><text x="258" y="326" class="tb" style="fill:#fff">conector + funil down</text></g>
- <g class="hot" data-k="hous"><rect x="238" y="170" width="144" height="135" fill="#14b8a6" stroke="#99f6e4"/><text x="246" y="290" class="tb" style="fill:#042f2e">tubing head</text><text x="246" y="302" class="t2" style="fill:#042f2e">(alojador / housing)</text></g>
- <g class="hot" data-k="hel"><path d="M252 190 L368 214 M252 214 L368 238 M252 238 L368 262" stroke="#fde047" stroke-width="3"/><text x="300" y="232" class="tb" style="fill:#fde047;background:#000">hélice helicoidal</text></g>
- <g class="hot" data-k="th"><rect x="296" y="150" width="28" height="150" fill="#f472b6" opacity=".55" stroke="#fbcfe8" stroke-dasharray="4 3"/><text x="330" y="160" class="t2" style="fill:#fbcfe8">TH assenta aqui</text></g>
+ <g class="hot" data-k="hous"><rect x="238" y="170" width="144" height="135" fill="#14b8a6" stroke="#99f6e4"/></g>
+ <g class="hot" data-k="hel"><path d="M252 190 L368 214 M252 214 L368 238 M252 238 L368 262" stroke="#fde047" stroke-width="3"/><text x="232" y="200" class="tb" text-anchor="end" style="fill:#fde047">hélice helicoidal</text></g>
+ <g class="hot" data-k="th"><rect x="296" y="150" width="28" height="150" fill="#f472b6" opacity=".55" stroke="#fbcfe8" stroke-dasharray="4 3"/></g>
  <g class="hot" data-k="funup"><path d="M222 172 L238 118 H382 L398 172Z" fill="#0d9488" stroke="#99f6e4"/><text x="268" y="142" class="tb" style="fill:#fff">funil up</text></g>
- <g class="hot" data-k="bucha"><rect x="276" y="104" width="68" height="14" fill="#a78bfa" stroke="#ddd6fe"/><text x="350" y="114" class="t2" style="fill:#ddd6fe">bucha de vedação/proteção</text></g>
+ <g class="hot" data-k="bucha"><rect x="276" y="104" width="68" height="14" fill="#a78bfa" stroke="#ddd6fe"/><text x="270" y="114" class="t2" text-anchor="end" style="fill:#ddd6fe">bucha de vedação/proteção</text></g>
  <g class="hot" data-k="berco"><path d="M382 236 H448 V252 H382Z" fill="#1d4ed8" stroke="#93c5fd"/><text x="388" y="270" class="tb" style="fill:#bfdbfe">berço (cradle)</text></g>
- <g class="hot" data-k="hubs"><circle cx="520" cy="150" r="22" fill="#b45309" stroke="#fde047"/><text x="502" y="154" class="tb" style="fill:#fff">MCV-P</text><circle cx="520" cy="205" r="22" fill="#0369a1" stroke="#7dd3fc"/><text x="502" y="209" class="tb" style="fill:#fff">MCV-A</text><circle cx="520" cy="260" r="22" fill="#6d28d9" stroke="#c4b5fd"/><text x="502" y="264" class="tb" style="fill:#fff">MCV-U</text><text x="470" y="300" class="t2">hubs (3-MCV): produção · anular · umbilical</text></g>
- <g class="hot" data-k="pig"><path d="M498 150 H440 V205 H498" stroke="#22d3ee" stroke-width="3" fill="none" stroke-dasharray="5 3"/><circle cx="440" cy="178" r="7" fill="#22d3ee"/><text x="418" y="196" class="t2" style="fill:#67e8f9">loop / válvula pig x-over</text></g>
+ <g class="hot" data-k="hubs"><circle cx="520" cy="150" r="22" fill="#b45309" stroke="#fde047"/><text x="502" y="154" class="tb" style="fill:#fff">MCV-P</text><circle cx="520" cy="205" r="22" fill="#0369a1" stroke="#7dd3fc"/><text x="502" y="209" class="tb" style="fill:#fff">MCV-A</text><circle cx="520" cy="260" r="22" fill="#6d28d9" stroke="#c4b5fd"/><text x="502" y="264" class="tb" style="fill:#fff">MCV-U</text><text x="520" y="304" class="t2" text-anchor="middle">hubs (3-MCV)</text><text x="520" y="316" class="t2" text-anchor="middle">produção · anular · umbilical</text></g>
+ <g class="hot" data-k="pig"><path d="M498 150 H440 V205 H498" stroke="#22d3ee" stroke-width="3" fill="none" stroke-dasharray="5 3"/><circle cx="440" cy="178" r="7" fill="#22d3ee"/><text x="398" y="218" class="t2" style="fill:#67e8f9">loop / válvula</text><text x="398" y="229" class="t2" style="fill:#67e8f9">pig x-over</text></g>
  <g class="hot" data-k="act"><rect x="176" y="230" width="62" height="22" fill="#374151" stroke="#9ca3af"/><text x="180" y="245" class="t2">atuadores</text></g>
- <path d="M398 120 L430 60" stroke="#fde047"/><text x="432" y="58" class="t2">ANM desce por aqui (4 chavetas nos rasgos do funil)</text>
+ <path d="M398 120 L430 60" stroke="#fde047"/><text x="436" y="50" class="t2">ANM desce por aqui</text><text x="436" y="62" class="t2">(4 chavetas nos rasgos do funil)</text>
+ <text x="330" y="160" class="t2" style="fill:#fbcfe8;pointer-events:none">TH assenta aqui</text>
+ <text x="244" y="290" class="tb" style="fill:#042f2e">tubing head</text><text x="244" y="302" class="t2" style="fill:#042f2e">(alojador / housing)</text>
  <circle r="5" fill="#fde047"><animateMotion dur="3s" repeatCount="indefinite" path="M398 60 L330 150 L330 200"/></circle>
  </svg>`));
  const info=infoBox(b,['BAP — Base Adaptadora de Produção','Toque em uma parte. Também chamada tubing spool: é a peça entre a cabeça de poço e a ANM. Peso da ANM + tree cap + linhas e o da COP descarregam sobre ela.']);
@@ -527,8 +565,8 @@ function draw(){
  <rect x="312" y="96" width="16" height="360" fill="#9a3412" stroke="#fdba74"/>
  <g class="hot" data-k="cop"><text x="256" y="250" class="tb" style="fill:#fdba74" transform="rotate(-90 264 250)">COP</text></g>
  <g class="hot" data-k="dhsv"><rect x="305" y="150" width="30" height="24" rx="4" fill="${S.dhsv?'#16a34a':'#dc2626'}" stroke="#fff"/><text x="342" y="167" class="tb" style="fill:#fff">DHSV</text></g>
- <path d="M300 96 V162 H305" stroke="#a78bfa" stroke-width="2" fill="none"/><text x="252" y="130" class="t2" style="fill:#c4b5fd">linha de controle</text>
- <g class="hot" data-k="mand"><rect x="326" y="290" width="26" height="30" rx="3" fill="#0e7490" stroke="#67e8f9"/><circle cx="332" cy="305" r="5" fill="#f59e0b"/><text x="358" y="300" class="tb" style="fill:#67e8f9">mandril de gas lift</text><text x="358" y="312" class="t2">(VGL = válvula de gas lift)</text></g>
+ <path d="M300 96 V162 H305" stroke="#a78bfa" stroke-width="2" fill="none"/><text x="250" y="122" class="t2" style="fill:#c4b5fd">linha de</text><text x="250" y="133" class="t2" style="fill:#c4b5fd">controle</text>
+ <g class="hot" data-k="mand"><rect x="326" y="290" width="26" height="30" rx="3" fill="#0e7490" stroke="#67e8f9"/><circle cx="332" cy="305" r="5" fill="#f59e0b"/><path d="M352 305 H408" stroke="#67e8f9" stroke-dasharray="3 3"/><text x="414" y="302" class="tb" style="fill:#67e8f9">mandril de gas lift</text><text x="414" y="314" class="t2">(VGL = válvula de gas lift)</text></g>
  <g class="hot" data-k="pdg"><rect x="305" y="392" width="30" height="16" fill="#15803d" stroke="#86efac"/><text x="342" y="404" class="tb" style="fill:#86efac">PDG</text><path d="M300 396 V96" stroke="#22c55e" stroke-width="1.5" fill="none" stroke-dasharray="2 3"/></g>
  <g class="hot" data-k="pack"><rect x="298" y="424" width="44" height="14" fill="#52525b" stroke="#d4d4d8"/><rect x="244" y="424" width="54" height="14" fill="#52525b"/><rect x="342" y="424" width="54" height="14" fill="#52525b"/><text x="402" y="436" class="tb">packer</text></g>
  <g class="hot" data-k="res"><rect x="200" y="470" width="240" height="50" fill="#451a03" stroke="#a16207"/><text x="290" y="500" class="tb" style="fill:#fcd34d">reservatório</text></g>
@@ -578,7 +616,7 @@ const S=`<svg viewBox="0 0 780 470" id="vhs">
 <line x1="390" y1="10" x2="390" y2="460" stroke="#1f4163" stroke-dasharray="5 5"/>
 <!-- vertical -->
 <rect x="130" y="390" width="120" height="30" fill="#6b7280"/><rect x="140" y="420" width="12" height="40" fill="#78350f"/>
-<path d="M142 390 L152 330 H228 L238 390Z" fill="#0d9488" stroke="#5eead4"/><text x="160" y="368" class="tb" style="fill:#042f2e">BAP</text>
+<path d="M142 390 L152 330 H228 L238 390Z" fill="#0d9488" stroke="#5eead4"/><text x="208" y="372" class="tb" style="fill:#042f2e">BAP</text>
 <rect x="268" y="352" width="60" height="12" fill="#a16207"/><text x="270" y="346" class="t2">MLF no berço (linhas ficam)</text>
 <g id="v_th" class="mv"><rect x="176" y="332" width="28" height="56" fill="#f472b6"/><rect x="184" y="388" width="12" height="70" fill="#fb923c" opacity="0"/></g>
 <g id="v_cop" class="mv"><rect x="184" y="388" width="12" height="32" fill="#fb923c"/></g>
@@ -587,7 +625,7 @@ const S=`<svg viewBox="0 0 780 470" id="vhs">
 <g id="v_bop" class="mv"><rect x="150" y="190" width="80" height="138" rx="6" fill="#334155" stroke="#94a3b8"/><rect x="132" y="220" width="18" height="14" fill="#ef4444"/><rect x="230" y="220" width="18" height="14" fill="#ef4444"/><text x="174" y="270" class="tb">BOP</text></g>
 <!-- horizontal -->
 <rect x="520" y="390" width="120" height="30" fill="#6b7280"/><rect x="530" y="420" width="12" height="40" fill="#78350f"/>
-<path d="M526 390 L542 270 H618 L634 390Z" fill="#b45309" stroke="#fde047"/><text x="546" y="360" class="tb" style="fill:#fff">ANMH</text>
+<path d="M526 390 L542 270 H618 L634 390Z" fill="#b45309" stroke="#fde047"/><text x="597" y="366" class="tb" style="fill:#fff">ANMH</text>
 <rect x="634" y="296" width="36" height="14" fill="#a16207"/><rect x="634" y="320" width="36" height="14" fill="#a16207"/><rect x="490" y="296" width="36" height="14" fill="#a16207"/><rect x="490" y="320" width="36" height="14" fill="#a16207"/><text x="640" y="290" class="t2">válvulas laterais</text>
 <g id="h_th" class="mv"><rect x="566" y="290" width="28" height="90" fill="#f472b6"/></g>
 <g id="h_cop" class="mv"><rect x="574" y="380" width="12" height="40" fill="#fb923c"/></g>
@@ -1130,7 +1168,7 @@ tabs(m,[
 {t:'Gas lift',r(b){
  b.appendChild(mk(`<div><div class="row"><label>Vazão de gás injetado <input type="range" id="gv" min="0" max="100" value="40"></label><b id="gt"></b></div><svg viewBox="0 0 560 300" id="gs"></svg><div class="card" id="gi"></div></div>`));
  const f=()=>{const g=+$('#gv',b).value,a=g/100*0.6;const rho=(1-a)*850+a*80;const dp=rho*9.81*1500/1e5;
-  let s='<rect x="230" y="20" width="100" height="250" fill="#0b2740" stroke="#64748b"/><rect x="190" y="20" width="40" height="250" fill="#1e293b" stroke="#475569"/><text x="150" y="14" class="t2">anular (gás desce)</text><text x="236" y="14" class="t2">coluna (óleo + gás)</text>';
+  let s='<rect x="230" y="20" width="100" height="250" fill="#0b2740" stroke="#64748b"/><rect x="190" y="20" width="40" height="250" fill="#1e293b" stroke="#475569"/><text x="226" y="14" class="t2" text-anchor="end">anular (gás desce)</text><text x="236" y="14" class="t2">coluna (óleo + gás)</text>';
   for(let i=0;i<Math.round(g/4);i++){const x=240+(i*37)%80,y0=30+(i*53)%230;s+=`<circle cx="${x}" cy="${y0}" r="${3+(i%3)}" fill="#fde68a" opacity=".85"><animate attributeName="cy" from="${y0+30}" to="${y0-30}" dur="${1.5+(i%4)*.4}s" repeatCount="indefinite"/></circle>`}
   s+=pipe('M200 20 V250','#fbbf24',4)+'<rect x="186" y="240" width="48" height="16" fill="#ef4444"/><text x="340" y="250" class="t2" style="fill:#fca5a5">válvula de gas lift (mandril)</text><text x="340" y="150" class="tb">↑ óleo</text>';
   $('#gs',b).innerHTML=s;$('#gt',b).textContent=g+' %';
@@ -1287,8 +1325,8 @@ tabs(m,[
 CH.push({id:'oceano',title:'Oceanografia aplicada',lead:'Correntes e massas d’água (costa brasileira) e por que isso entra no projeto de risers e na operação com ROV.',render(m){
 tabs(m,[
 {t:'Vento → corrente',r(b){
- b.appendChild(mk(`<div><div class="row"><label>Vento (m/s) <input type="range" id="vw" min="2" max="30" value="10"></label><b id="vv"></b></div><svg viewBox="0 0 420 200" style="width:100%;height:auto"><defs><marker id="ek" markerWidth="7" markerHeight="7" refX="4" refY="3.5" orient="auto"><path d="M0 0L7 3.5L0 7Z" fill="#38bdf8"/></marker></defs><text x="10" y="18" class="tb" style="fill:#fff;font-size:13px">Espiral de Ekman (hemisfério sul: desvio para a esquerda)</text><g id="sp"></g></svg><div class="card" id="vt"></div></div>`));
- const f=()=>{const w=+$('#vw',b).value;const v=(w*0.03).toFixed(2);$('#vv',b).textContent=w+' m/s';let g='';for(let i=0;i<6;i++){const L=(80-i*11)*(0.4+w/35),x=60,y=40+i*28;g+=`<line x1="${x}" y1="${y}" x2="${x+L}" y2="${y}" stroke="#38bdf8" stroke-width="3" marker-end="url(#ek)" transform="rotate(${-45-i*18} ${x} ${y})"/>`}
+ b.appendChild(mk(`<div><div class="row"><label>Vento (m/s) <input type="range" id="vw" min="2" max="30" value="10"></label><b id="vv"></b></div><svg viewBox="0 0 420 250" style="width:100%;height:auto"><defs><marker id="ek" markerWidth="7" markerHeight="7" refX="4" refY="3.5" orient="auto"><path d="M0 0L7 3.5L0 7Z" fill="#38bdf8"/></marker></defs><text x="10" y="18" class="tb" style="fill:#fff;font-size:13px">Espiral de Ekman (hemisfério sul: desvio para a esquerda)</text><g id="sp"></g></svg><div class="card" id="vt"></div></div>`));
+ const f=()=>{const w=+$('#vw',b).value;const v=(w*0.03).toFixed(2);$('#vv',b).textContent=w+' m/s';let g='';for(let i=0;i<6;i++){const L=Math.min(80,(80-i*11)*(0.4+w/35)),x=60,y=84+i*30;g+=`<line x1="${x}" y1="${y}" x2="${x+L}" y2="${y}" stroke="#38bdf8" stroke-width="3" marker-end="url(#ek)" transform="rotate(${-45-i*18} ${x} ${y})"/>`}
   $('#sp',b).innerHTML=g;
   $('#vt',b).innerHTML='Com vento de <b>'+w+' m/s</b>, a corrente superficial teórica é cerca de <b>'+v+' m/s</b> (≈3% da velocidade do vento). A velocidade cai e o sentido gira com a profundidade; o movimento cessa por volta de ~100 m (profundidade de influência do atrito), e o transporte líquido de Ekman fica a 90° do vento.'};
  $('#vw',b).oninput=f;f();
@@ -1448,14 +1486,389 @@ tabs(m,[
 }}],0);
 }});
 
+CH.push({id:'esquema',title:'Esquemático interativo',lead:'Toque em qualquer equipamento, do topside ao leito marinho. Use o caminho do comando para ver como um sinal vira abertura de válvula.',render(m){
+const root=mk(`<div class="qroot" id="qroot">
+<div class="row" id="tabs"><button class="btn tab on" data-v="campo">Campo (UEP → leito)</button><button class="btn tab" data-v="anm">Zoom na ANM</button></div>
+<div id="viewbar"><div class="row" id="chips"></div>
+<div class="row"><button class="btn" id="bPath">▶ Caminho do comando</button><button class="btn" id="bSeal" style="display:none">Teste de vedação da TreeCap</button><button class="btn" id="bCorr" style="display:none">Abandono temporário (capa de corrosão)</button><button class="btn" id="bReset">Limpar seleção</button></div>
+<div class="qsteps" id="steps"></div></div>
+<div class="sm">↔ Arraste o esquema para os lados para ver tudo.</div><div class="qstage" id="stage"><div class="qgauge" id="gauge"></div>      <svg id="v-campo" viewBox="0 0 1000 650" role="img" aria-label="Visão geral do campo">
+        <defs>
+          <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1b5b8a"/><stop offset="1" stop-color="#06182a"/></linearGradient>
+          <g id="anmIcon">
+            <rect class="qshape" x="-40" y="28" width="80" height="14" rx="3" fill="#6b7f95" stroke="#0b1b2e"/>
+            <rect class="qshape" x="-22" y="-20" width="44" height="52" rx="4" fill="#e0a43a" stroke="#0b1b2e"/>
+            <rect class="qshape" x="-14" y="-34" width="28" height="16" rx="3" fill="#c9d6e4" stroke="#0b1b2e"/>
+            <rect class="qshape" x="-48" y="-6" width="26" height="22" rx="3" fill="#2ec4b6" stroke="#0b1b2e"/>
+            <rect class="qshape" x="22" y="4" width="22" height="12" rx="2" fill="#b48cff" stroke="#0b1b2e"/>
+          </g>
+        </defs>
+        <rect x="0" y="110" width="1000" height="410" fill="url(#sea)"/>
+        <path d="M0 110 Q 50 100 100 110 T 200 110 T 300 110 T 400 110 T 500 110 T 600 110 T 700 110 T 800 110 T 900 110 T 1000 110" fill="none" stroke="#5fb3e6" stroke-width="2"/>
+        <rect x="0" y="520" width="1000" height="130" fill="#3a3326"/>
+        <path d="M0 520 Q 120 508 250 520 T 500 520 T 750 520 T 1000 520" fill="#4a4030" stroke="#6b5d44"/>
+        <text class="qlbl2" x="14" y="130">lâmina d'água (fora de escala)</text>
+        <text class="qlbl2" x="14" y="545">leito marinho</text>
+
+        <!-- UEP -->
+        <path d="M20 108 L40 62 H400 L420 108 Z" fill="#3a4b5e" stroke="#0b1b2e" stroke-width="2"/>
+        <text class="qlbl2" x="30" y="56">UEP (plataforma/FPSO) – topside</text>
+        <g class="qeq" data-id="mcs" tabindex="0" role="button" aria-label="MCS"><rect class="qshape" x="40" y="68" width="58" height="34" rx="4" fill="#2ec4b6" stroke="#0b1b2e"/><text class="qlbl" x="69" y="90" text-anchor="middle" fill="#06222a" style="fill:#06222a">MCS</text></g>
+        <g class="qeq" data-id="hpu" tabindex="0" role="button" aria-label="HPU"><rect class="qshape" x="108" y="68" width="58" height="34" rx="4" fill="#4aa3ff" stroke="#0b1b2e"/><text class="qlbl" x="137" y="90" text-anchor="middle" style="fill:#06182a">HPU</text></g>
+        <g class="qeq" data-id="epu" tabindex="0" role="button" aria-label="EPU"><rect class="qshape" x="176" y="68" width="58" height="34" rx="4" fill="#ffb454" stroke="#0b1b2e"/><text class="qlbl" x="205" y="90" text-anchor="middle" style="fill:#2a1a00">EPU</text></g>
+        <g class="qeq" data-id="tutu" tabindex="0" role="button" aria-label="TUTU"><rect class="qshape" x="244" y="68" width="66" height="34" rx="4" fill="#b48cff" stroke="#0b1b2e"/><text class="qlbl" x="277" y="90" text-anchor="middle" style="fill:#1b0f33">TUTU</text></g>
+        <path d="M69 102 V108 M137 102 V108 M205 102 V108" stroke="#5fb3e6" stroke-width="1" opacity=".0"/>
+
+        <!-- RSV -->
+        <path d="M640 108 L655 80 H790 L805 108 Z" fill="#c7512d" stroke="#0b1b2e" stroke-width="2"/>
+        <rect x="690" y="62" width="40" height="18" fill="#dfe8f1" stroke="#0b1b2e"/>
+        <g class="qeq" data-id="rsv" tabindex="0" role="button" aria-label="RSV"><rect class="qshape" x="640" y="66" width="48" height="16" rx="3" fill="#0b1b2e" stroke="#5fb3e6"/><text class="qlbl" x="664" y="78" text-anchor="middle">RSV</text></g>
+
+        <!-- Umbilical -->
+        <g class="qeq" data-id="umbilical" tabindex="0" role="button" aria-label="Umbilical">
+          <path class="qshape" id="umbPath" d="M277 102 V112 C277 270 180 300 180 470" fill="none" stroke="#b48cff" stroke-width="6" stroke-linecap="round"/>
+          <path id="umbFlow" d="M277 102 V112 C277 270 180 300 180 470" fill="none" stroke="#fff" stroke-width="2" opacity="0"/>
+          
+        </g>
+
+        <!-- SUTA -->
+        <g class="qeq" data-id="suta" tabindex="0" role="button" aria-label="SUTA">
+          <rect class="qshape" x="140" y="470" width="80" height="46" rx="5" fill="#b48cff" stroke="#0b1b2e"/>
+          <rect x="134" y="512" width="92" height="8" fill="#6b7f95"/>
+          <text class="qlbl" x="180" y="497" text-anchor="middle" style="fill:#1b0f33">SUTA</text>
+        </g>
+        <g class="qeq" data-id="sdu" tabindex="0" role="button" aria-label="SDU">
+          <rect class="qshape" x="330" y="474" width="80" height="42" rx="5" fill="#4aa3ff" stroke="#0b1b2e"/>
+          <rect x="324" y="512" width="92" height="8" fill="#6b7f95"/>
+          <text class="qlbl" x="370" y="500" text-anchor="middle" style="fill:#06182a">SDU</text>
+        </g>
+        <g class="qeq" data-id="hfl" tabindex="0" role="button" aria-label="HFL">
+          <path class="qshape" d="M220 484 C250 472 300 472 330 484" fill="none" stroke="#4aa3ff" stroke-width="4" stroke-linecap="round"/>
+          <path class="qshape" d="M410 484 C440 472 500 464 532 476" fill="none" stroke="#4aa3ff" stroke-width="4" stroke-linecap="round"/>
+          <path class="qshape" d="M350 516 V544 Q350 552 358 552 H786 Q794 552 794 544 V500 Q794 492 802 492 H802" fill="none" stroke="#4aa3ff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        </g>
+        <g class="qeq" data-id="efl" tabindex="0" role="button" aria-label="EFL">
+          <path class="qshape" d="M220 494 C250 482 300 482 330 494" fill="none" stroke="#ffb454" stroke-width="4" stroke-linecap="round"/>
+          <path class="qshape" d="M410 494 C440 482 500 472 532 484" fill="none" stroke="#ffb454" stroke-width="4" stroke-linecap="round"/>
+          <path class="qshape" d="M362 516 V534 Q362 542 370 542 H778 Q786 542 786 534 V492 Q786 484 794 484 H802" fill="none" stroke="#ffb454" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        </g>
+        <g class="qeq" data-id="cfl" tabindex="0" role="button" aria-label="CFL">
+          <path class="qshape" d="M220 504 C250 492 300 492 330 504" fill="none" stroke="#c6e04a" stroke-width="4" stroke-linecap="round"/>
+          <path class="qshape" d="M410 504 C440 492 500 480 532 492" fill="none" stroke="#c6e04a" stroke-width="4" stroke-linecap="round"/>
+          <path class="qshape" d="M374 516 V524 Q374 532 382 532 H770 Q778 532 778 524 V484 Q778 476 786 476 H802" fill="none" stroke="#c6e04a" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        </g>
+        <!-- rótulos dos trechos -->
+        <g pointer-events="none"><rect x="228" y="441" width="95" height="16" rx="8" fill="#0b1b2e" fill-opacity=".82" stroke="#1f4466"/><text class="qlbl2" x="275" y="452" text-anchor="middle">HFL · EFL · CFL</text></g>
+        <g pointer-events="none"><rect x="420" y="429" width="95" height="16" rx="8" fill="#0b1b2e" fill-opacity=".82" stroke="#1f4466"/><text class="qlbl2" x="468" y="440" text-anchor="middle">HFL · EFL · CFL</text></g>
+        <g pointer-events="none"><rect x="460" y="577" width="219" height="16" rx="8" fill="#0b1b2e" fill-opacity=".82" stroke="#1f4466"/><text class="qlbl2" x="570" y="588" text-anchor="middle">SDU → ANM 2: jumpers ao longo do leito</text></g>
+        <g pointer-events="none"><rect x="226" y="361" width="62" height="16" rx="8" fill="#0b1b2e" fill-opacity=".82" stroke="#1f4466"/><text class="qlbl2" x="257" y="372" text-anchor="middle">umbilical</text></g>
+
+        <!-- Legenda dos flying leads -->
+        <g>
+          <rect x="440" y="150" width="226" height="96" rx="8" fill="#0b1b2e" fill-opacity=".9" stroke="#1f4466"/>
+          <text class="qlbl2" x="454" y="170">Flying leads (instalados por ROV)</text>
+          <g class="qeq" data-id="hfl" tabindex="0" role="button" aria-label="HFL"><line class="qshape" x1="454" x2="490" y1="188" y2="188" stroke="#4aa3ff" stroke-width="5" fill="none" stroke-linecap="round"/><text class="qlbl" x="500" y="192">HFL · hidráulico</text></g>
+          <g class="qeq" data-id="efl" tabindex="0" role="button" aria-label="EFL"><line class="qshape" x1="454" x2="490" y1="210" y2="210" stroke="#ffb454" stroke-width="5" fill="none" stroke-linecap="round"/><text class="qlbl" x="500" y="214">EFL · elétrico (jumper)</text></g>
+          <g class="qeq" data-id="cfl" tabindex="0" role="button" aria-label="CFL"><line class="qshape" x1="454" x2="490" y1="232" y2="232" stroke="#c6e04a" stroke-width="5" fill="none" stroke-linecap="round"/><text class="qlbl" x="500" y="236">CFL · químico</text></g>
+        </g>
+
+        <!-- ANMs -->
+        <g class="qeq" data-id="anm" tabindex="0" role="button" aria-label="ANM" transform="translate(580,478)"><use href="#anmIcon"/></g>
+        <g class="qeq" data-id="anm" tabindex="0" role="button" aria-label="ANM" transform="translate(850,478)"><use href="#anmIcon"/></g>
+        <text class="qlbl" x="580" y="432" text-anchor="middle">ANM 1</text>
+        <text class="qlbl" x="850" y="432" text-anchor="middle">ANM 2</text>
+        <text class="qlbl2" x="990" y="640" text-anchor="end">toque na ANM; para o detalhe, abra "Zoom na ANM"</text>
+
+        <!-- ROV -->
+        <path d="M740 90 C740 200 700 300 700 380" fill="none" stroke="#e6f0fa" stroke-width="1.5" stroke-dasharray="4 3" opacity=".7"/>
+        <g class="qeq" data-id="rov" tabindex="0" role="button" aria-label="ROV"><rect class="qshape" x="672" y="380" width="56" height="30" rx="6" fill="#ff8a3d" stroke="#0b1b2e"/><circle cx="684" cy="412" r="5" fill="#0b1b2e"/><circle cx="716" cy="412" r="5" fill="#0b1b2e"/><text class="qlbl" x="700" y="400" text-anchor="middle" style="fill:#2a1200">ROV</text></g>
+
+        <!-- linha de fluxo -->
+        <path d="M900 470 C940 470 950 400 1000 330" fill="none" stroke="#e0a43a" stroke-width="5" stroke-dasharray="10 5"/>
+        <text class="qlbl2" x="990" y="312" text-anchor="end">linha de fluxo → UEP</text>
+      </svg>
+      <svg id="v-anm" viewBox="0 130 1000 490" role="img" aria-label="Zoom na ANM" style="display:none">
+        <rect x="0" y="0" width="1000" height="560" fill="#08213a"/>
+        <rect x="0" y="560" width="1000" height="60" fill="#3a3326"/>
+        <path d="M0 560 Q 250 548 500 560 T 1000 560" fill="#4a4030" stroke="#6b5d44"/>
+        <text class="qlbl2" x="14" y="590">leito marinho</text>
+
+        <!-- BAP -->
+        <g class="qeq" data-id="bap" tabindex="0" role="button" aria-label="BAP">
+          <path class="qshape" d="M380 560 L400 500 H600 L620 560 Z" fill="#6b7f95" stroke="#0b1b2e"/>
+          <text class="qlbl" x="500" y="540" text-anchor="middle">BAP</text>
+        </g>
+
+        <!-- Wellhead housing (visível no modo abandono) -->
+        <g id="wh">
+          <rect x="462" y="400" width="76" height="100" fill="#55677c" stroke="#0b1b2e"/>
+          <text class="qlbl2" x="500" y="470" text-anchor="middle">cabeça de poço</text>
+        </g>
+
+        <!-- Árvore -->
+        <g id="tree">
+          <g class="qeq" data-id="anm" tabindex="0" role="button" aria-label="ANM corpo">
+            <rect class="qshape" x="440" y="300" width="120" height="200" rx="6" fill="#e0a43a" stroke="#0b1b2e"/>
+            <text class="qlbl" x="500" y="322" text-anchor="middle" style="fill:#2a1a00">ANM</text>
+          </g>
+          <g class="qeq" data-id="valvulas" tabindex="0" role="button" aria-label="Válvulas">
+            <rect class="qshape" x="470" y="338" width="14" height="14" fill="#2a1a00" stroke="#fff"/><rect class="qshape" x="470" y="360" width="14" height="14" fill="#2a1a00" stroke="#fff"/>
+            <rect class="qshape" x="516" y="338" width="14" height="14" fill="#2a1a00" stroke="#fff"/><rect class="qshape" x="516" y="360" width="14" height="14" fill="#2a1a00" stroke="#fff"/>
+            <text class="qlbl2" x="500" y="392" text-anchor="middle" style="fill:#2a1a00">válvulas</text>
+          </g>
+          <g class="qeq" data-id="th" tabindex="0" role="button" aria-label="TH">
+            <rect class="qshape" x="460" y="420" width="80" height="64" rx="4" fill="#7a5a14" stroke="#fff" stroke-dasharray="5 3"/>
+            <text class="qlbl" x="500" y="456" text-anchor="middle">TH</text>
+          </g>
+          <g class="qeq" data-id="treecap" tabindex="0" role="button" aria-label="TreeCap">
+            <rect class="qshape" x="452" y="262" width="96" height="36" rx="5" fill="#c9d6e4" stroke="#0b1b2e"/>
+            <circle cx="548" cy="280" r="6" fill="#ff6b6b" stroke="#0b1b2e"/>
+            <text class="qlbl" x="500" y="285" text-anchor="middle" style="fill:#0b1b2e">TreeCap</text>
+          </g>
+        </g>
+
+        <!-- Capa de corrosão (modo abandono) -->
+        <g id="corrG" style="display:none">
+          <g class="qeq" data-id="corrosao" tabindex="0" role="button" aria-label="Capa de corrosão">
+            <path class="qshape" d="M440 400 L456 356 H544 L560 400 Z" fill="#9be564" stroke="#0b1b2e"/>
+            <circle cx="560" cy="370" r="6" fill="#ff6b6b" stroke="#0b1b2e"/>
+            <text class="qlbl" x="500" y="384" text-anchor="middle" style="fill:#0b1b2e">Capa de corrosão</text>
+          </g>
+          <text class="qlbl2" x="500" y="338" text-anchor="middle">poço sem ANM (abandono temporário)</text>
+        </g>
+
+        <!-- MCV (esq) -->
+        <g class="qeq" data-id="mcv" tabindex="0" role="button" aria-label="MCV">
+          <rect class="qshape" x="372" y="430" width="68" height="50" rx="4" fill="#b48cff" stroke="#0b1b2e"/>
+          <text class="qlbl" x="406" y="460" text-anchor="middle" style="fill:#1b0f33">MCV</text>
+        </g>
+        <!-- MLF e CLF (dir) -->
+        <g class="qeq" data-id="mlf" tabindex="0" role="button" aria-label="MLF">
+          <rect class="qshape" x="560" y="440" width="52" height="40" rx="4" fill="#d38a2e" stroke="#0b1b2e"/>
+          <text class="qlbl" x="586" y="465" text-anchor="middle" style="fill:#2a1a00">MLF</text>
+        </g>
+        <g class="qeq" data-id="clf" tabindex="0" role="button" aria-label="CLF">
+          <rect class="qshape" x="618" y="436" width="56" height="48" rx="4" fill="#ff9f43" stroke="#0b1b2e"/>
+          <text class="qlbl" x="646" y="465" text-anchor="middle" style="fill:#2a1200">CLF</text>
+        </g>
+        <path d="M674 460 H1000" stroke="#e0a43a" stroke-width="8" stroke-dasharray="14 6"/>
+        <text class="qlbl2" x="760" y="448">linha de fluxo</text>
+
+        <!-- SCMMB / SCM / IMUX -->
+        <g class="qeq" data-id="scmmb" tabindex="0" role="button" aria-label="SCMMB">
+          <rect class="qshape" x="352" y="352" width="88" height="14" fill="#6b7f95" stroke="#0b1b2e"/>
+          <rect x="440" y="330" width="6" height="36" fill="#6b7f95"/>
+          <text class="qlbl2" x="396" y="378" text-anchor="middle">SCMMB</text>
+        </g>
+        <g class="qeq" data-id="scm" tabindex="0" role="button" aria-label="SCM">
+          <rect class="qshape" x="360" y="296" width="72" height="54" rx="5" fill="#2ec4b6" stroke="#0b1b2e"/>
+          <text class="qlbl" x="396" y="328" text-anchor="middle" style="fill:#06222a">SCM</text>
+        </g>
+        <g class="qeq" data-id="imux" tabindex="0" role="button" aria-label="IMUX">
+          <rect class="qshape" x="574" y="330" width="64" height="44" rx="5" fill="#2ec4b6" stroke="#0b1b2e" stroke-dasharray="4 3"/>
+          <text class="qlbl" x="606" y="357" text-anchor="middle" style="fill:#06222a">IMUX</text>
+        </g>
+        <text class="qlbl2 ontree" x="606" y="388" text-anchor="middle">posição ilustrativa</text>
+
+        <!-- BullsEye -->
+        <g class="qeq" data-id="bullseye" tabindex="0" role="button" aria-label="BullsEye">
+          <circle class="qshape" cx="652" cy="528" r="18" fill="#dff3ff" stroke="#0b1b2e"/>
+          <circle cx="652" cy="528" r="11" fill="none" stroke="#0b1b2e"/><circle cx="652" cy="528" r="4" fill="#4aa3ff"/>
+          <text class="qlbl2" x="652" y="556" text-anchor="middle">BullsEye</text>
+        </g>
+
+        <!-- Flying leads + MQC -->
+        <g class="qeq" data-id="mqc" tabindex="0" role="button" aria-label="MQC">
+          <rect class="qshape" x="300" y="318" width="36" height="46" rx="3" fill="#dfe8f1" stroke="#0b1b2e"/>
+          <text class="qlbl2" x="318" y="344" text-anchor="middle" style="fill:#0b1b2e">MQC</text>
+        </g>
+                <g class="qeq" data-id="cfl" tabindex="0" role="button" aria-label="CFL">
+          <path class="qshape" d="M60 380 C190 380 210 326 300 326" fill="none" stroke="#c6e04a" stroke-width="6" stroke-linecap="round"/>
+          <text class="qlbl2" x="66" y="400">CFL química</text>
+        </g>
+        <g class="qeq" data-id="hfl" tabindex="0" role="button" aria-label="HFL">
+          <path class="qshape" d="M60 430 C190 430 210 341 300 341" fill="none" stroke="#4aa3ff" stroke-width="6" stroke-linecap="round"/>
+          <text class="qlbl2" x="66" y="450">HFL hidráulico</text>
+        </g>
+        <g class="qeq" data-id="efl" tabindex="0" role="button" aria-label="EFL">
+          <path class="qshape" d="M60 480 C190 480 210 356 300 356" fill="none" stroke="#ffb454" stroke-width="6" stroke-linecap="round"/>
+          <text class="qlbl2" x="66" y="500">EFL elétrico</text>
+        </g>
+
+        <!-- ROV -->
+        <g class="qeq" data-id="rov" tabindex="0" role="button" aria-label="ROV">
+          <rect class="qshape" x="700" y="150" width="150" height="62" rx="10" fill="#ff8a3d" stroke="#0b1b2e"/>
+          <circle cx="725" cy="220" r="8" fill="#0b1b2e"/><circle cx="825" cy="220" r="8" fill="#0b1b2e"/>
+          <text class="qlbl" x="775" y="187" text-anchor="middle" style="fill:#2a1200">ROV</text>
+          <path d="M700 185 C640 185 600 230 560 270" fill="none" stroke="#ff8a3d" stroke-width="5" stroke-linecap="round"/>
+        </g>
+        <path id="hotstab" d="M560 270 L548 280" stroke="#fff" stroke-width="3" opacity="0"/>
+        <text class="qlbl2" x="500" y="248" text-anchor="middle" id="sealHint"></text>
+      </svg></div>
+<aside class="qpanel" id="panel"></aside>
+<div class="sm" style="margin-top:10px">Esquema didático, fora de escala; posições ilustrativas e variáveis por projeto e fabricante. Itens "a confirmar" dependem do procedimento ou manual do seu projeto. Construído a partir de fontes públicas (SUT, OilfieldWiki, Subsea Engineering Handbook, patentes, especificações técnicas de serviços de ROV).</div>
+</div>`);m.appendChild(root);
+const $=s=>root.querySelector(s),$$=s=>[...root.querySelectorAll(s)];
+const CAT={ctl:['Controle','#2ec4b6'],hid:['Hidráulico','#4aa3ff'],ele:['Elétrico','#ffb454'],con:['Conexão','#b48cff'],bar:['Barreira/Vedação','#ff6b6b'],rov:['Atuação ROV','#9be564']};
+const I={
+mcs:{s:'MCS',n:'Master Control Station',c:['ctl','ele'],v:['campo'],d:'Nó central de controle no topside. É a interface entre o operador e os equipamentos submarinos.',f:'Executa shutdown de segurança, controle de poços e manifolds e aquisição de dados. Integra-se a outros sistemas da unidade (DCS/ICSS) e troca sinais com EPU, HPU e SCMs.'},
+hpu:{s:'HPU',n:'Hydraulic Power Unit',c:['hid','ctl'],v:['campo'],d:'Unidade que fornece as pressões hidráulicas baixa (LP) e alta (HP) para controle dos poços.',f:'O fluido segue pelo umbilical até o SCM, que o direciona às válvulas.'},
+epu:{s:'EPU',n:'Electrical Power Unit',c:['ele','ctl'],v:['campo'],d:'Unidade que fornece energia elétrica ao sistema submarino.',f:'Alimenta os módulos eletrônicos (SEM/SCM) pelo umbilical.'},
+tutu:{s:'TUTU / TUTA',n:'Topside Umbilical Termination Unit/Assembly',c:['con'],v:['campo'],d:'Terminação do umbilical na unidade de produção.',f:'Faz a conexão entre o umbilical e os sistemas de superfície (hidráulico, elétrico e fibra óptica).'},
+umbilical:{s:'Umbilical',n:'Umbilical de controle',c:['hid','ele','con'],v:['campo'],d:'Conjunto de condutos (tubos de aço, mangueiras, cabos elétricos, fibra óptica) agrupados numa capa externa.',f:'Leva da UEP ao leito marinho os serviços hidráulicos, químicos, de energia e de sinal.'},
+suta:{s:'SUTA / UTA',n:'Subsea Umbilical Termination Assembly',c:['con','hid','ele'],v:['campo'],d:'Interface submarina do umbilical. Pode servir de centro de distribuição hidráulica e química no leito.',f:'Composta tipicamente por UTH (cabeça de terminação), flying leads até o HDM, HDM (se houver) e fundação tipo mudmat. Liga-se às ANMs por HFL; os EFLs levam energia e comunicação da UTA aos SCMs. Uma SUTA pode atender vários poços.'},
+sdu:{s:'SDU',n:'Subsea Distribution Unit',c:['con','hid','ele'],v:['campo'],d:'Unidade que distribui serviços hidráulicos, químicos, de energia e de sinal para equipamentos a jusante (ANMs, manifolds, UTAs).',f:'Quando um umbilical atende vários poços, a distribuição é feita na UTA ou numa SDU (também chamada HDM), ligada à terminação por flying leads.',x:'Em algumas especificações Petrobras aparece SDA (Subsea Distribution Assembly). Confira o termo no seu glossário de bordo.'},
+hfl:{s:'HFL',n:'Hydraulic Flying Lead',c:['hid','con','rov'],v:['campo','anm'],d:'Flying lead hidráulico. Existem também EFL (elétrico), CFL (químico), SFL (steel) e PFL (power).',f:'Dá flexibilidade para transporte, manuseio e instalação subsea. Pode ter de poucos metros a mais de 200 m.',r:'O ROV voa o lead até o ponto de conexão segurando o suporte da placa e a trava com ferramenta de torque (ou FLOT/TDU).'},
+efl:{s:'EFL / Jumper elétrico',n:'Electrical Flying Lead',c:['ele','con','rov'],v:['campo','anm'],d:'Flying lead elétrico. "Jumper" e "flying lead" são termos usados muitas vezes como sinônimos.',f:'Leva energia e comunicação da UTA/SUTA ao SCM da ANM ou do manifold.',r:'Conectado por ROV, como os demais flying leads.'},
+cfl:{s:'CFL',n:'Chemical Flying Lead',c:['hid','con','rov'],v:['campo','anm'],d:'Jumper curto instalado por ROV que leva produtos químicos (inibidores de hidrato, parafina/asfalteno, incrustação e corrosão, e metanol) entre a unidade de distribuição ou terminação e o equipamento de produção.',f:'Liga SDU, UTA/SUTA ou unidade de injeção química à ANM, ao manifold ou ao SCM, para prevenir bloqueios e proteger os equipamentos durante a produção. Termina nas duas pontas em placas MQC com acopladores autovedantes (API 17H). Pode ser de mangueira termoplástica (estilo HFL) ou de tubo de aço (estilo SFL).',r:'Instalado e conectado por ROV como os demais flying leads. A inspeção visual periódica por ROV ajuda a detectar vazamento de químico.',x:'Texto-base trazido por você (fontes citadas nele não foram conferidas aqui). Confirme materiais, pressões e procedimento no projeto. Não confundir com CLF (Conector das Linhas de Fluxo).'},
+mqc:{s:'MQC',n:'Multiple Quick Connect',c:['con','rov'],v:['anm'],d:'Placa de conexão rápida com vários acoplamentos (hidráulicos, elétricos, ópticos). Também chamada stab-plate ou J-plate.',f:'A placa fixa (inboard) fica na estrutura e a placa voadora (outboard) vem no flying lead; as duas se encaixam por "stab".',r:'O ROV leva a placa voadora e a trava com ferramenta de torque.'},
+anm:{s:'ANM',n:'Árvore de Natal Molhada',c:['ctl','bar'],v:['campo','anm'],d:'Equipamento instalado no leito marinho sobre o poço. Pode ser vertical (ANM-V) ou horizontal (ANM-H).',f:'Controla o fluxo de produção/injeção e monitora parâmetros do poço (pressão, temperatura etc.). Na vertical a coluna de produção é instalada antes da ANM.',r:'Inspeção programada: visual, status das válvulas, corrosão, pintura, potencial eletroquímico e teste funcional de válvulas.'},
+valvulas:{s:'Válvulas da ANM',n:'Válvulas de produção e anular',c:['ctl','bar'],v:['anm'],d:'Válvulas que controlam a produção e o anular. São acionadas hidraulicamente pelo SCM.',f:'O SCM recebe o sinal elétrico decodificado e comanda solenoides que direcionam o fluido às válvulas.',r:'O ROV verifica o status das válvulas e faz teste funcional nas inspeções programadas.',x:'Desenho simplificado: o arranjo real depende do projeto (vertical/horizontal).'},
+bap:{s:'BAP',n:'Base Adaptadora de Produção',c:['con'],v:['anm'],d:'Base sobre a cabeça do poço que serve de interface para a ANM.',f:'Na ANM vertical, o Tubing Hanger apoia-se na cabeça do poço ou na BAP.'},
+th:{s:'TH',n:'Tubing Hanger (Suspensor de Coluna)',c:['bar'],v:['anm'],d:'Suspende a coluna de produção no poço.',f:'Na ANM vertical, assenta na cabeça do poço ou na BAP. Na horizontal, é instalado dentro do corpo da árvore.',x:'Desenho ilustrativo: a posição varia entre ANM vertical e horizontal.'},
+mlf:{s:'MLF',n:'Mandril das Linhas de Fluxo',c:['con'],v:['anm'],d:'Mandril onde o conector das linhas de fluxo (CLF) da ANM trava.',f:'É a interface mecânica entre a ANM e a linha de fluxo.'},
+clf:{s:'CLF',n:'Conector das Linhas de Fluxo',c:['con'],v:['anm'],d:'Conector da ANM que trava no mandril da linha de fluxo (MLF).',f:'Faz a ligação da ANM à linha de fluxo.'},
+mcv:{s:'MCV',n:'Módulo de Conexão Vertical',c:['con','rov'],v:['anm'],d:'Módulo usado para conexão vertical de linhas à ANM (em materiais Petrobras há MCV de produção, anular e umbilical).',f:'Tem painel de ROV, que localiza o veículo no módulo, e um goosenek para suportar esforços durante a instalação.',r:'Instalação do MCV em modo vertical com apoio de ROV.',x:'Desenho ilustrativo: posição e quantidade de MCVs variam por projeto.'},
+scm:{s:'SCM',n:'Subsea Control Module',c:['ctl','hid','ele'],v:['anm'],d:'Módulo de controle submarino. Os comandos vindos da superfície pelo umbilical são processados nos SEMs (Subsea Electronic Modules) dentro dele.',f:'O sinal elétrico decodificado opera solenoides (DCVs) que direcionam o fluido hidráulico às válvulas da ANM/manifold. Dados dos sensores voltam à superfície pelo mesmo caminho.',r:'O SCM só encaixa na orientação correta. O travamento pode ser feito por ROV com ferramenta própria (mecanismo over-center).'},
+scmmb:{s:'SCMMB',n:'SCM Mounting Base',c:['ctl','con'],v:['anm'],d:'Interface entre o SCM e as válvulas da ANM/manifold e sensores remotos.',f:'Geralmente é estrutura soldada, parafusada e aterrada ao frame. A face vertical recebe os acopladores elétricos e hidráulicos (LP e HP).'},
+imux:{s:'IMUX',n:'Unidade multiplexada de interface (a confirmar)',c:['ctl','ele','rov'],v:['anm'],d:'Definição informada pelo usuário: módulo eletrônico submarino de comunicação e monitoramento entre o fundo do poço e o sistema de controle.',f:'Nas especificações técnicas Petrobras de ROV, a sigla aparece no glossário como "Inverse Multiplexer".',r:'Existe atividade de ROV de instalação/desinstalação de IMUX: descer e subir o módulo (gaveta, gancho ou braço), assentar e travar.',x:'A posição no desenho é apenas ilustrativa. Confirme função e posição no manual do fabricante.'},
+treecap:{s:'TreeCap',n:'Capa da ANM',c:['bar','rov'],v:['anm'],d:'Fecha o topo da ANM em operação. É barreira que mantém o ambiente subsea limpo em caso de vazamento acima das válvulas de anular/swab.',f:'Versões para ROV podem ter flutuação (espuma sintática) e um caminho de fluxo para testar os selos.',r:'Instalada e recuperada por ROV, com hot stab para pressurizar e energizar os selos.',x:'Diferente da capa de corrosão: a TreeCap é barreira de pressão e fica na ANM em operação.'},
+corrosao:{s:'Capa de Corrosão',n:'Corrosion cap / debris cap',c:['bar','rov'],v:['anm'],d:'Capa protetora temporária no mandril ou hub do poço, árvore ou tubing head spool, usada em abandono temporário. Também chamada debris cap, trash cap ou temporary abandonment cap.',f:'Protege superfícies de vedação e perfis de travamento contra corrosão, detritos, lodo e incrustação biológica. Pode reter fluido inibidor de corrosão.',r:'O ROV trava a capa pela alça e injeta o inibidor via hot stab. Para remover, destrava e iça a capa. As versões para ROV costumam pesar cerca de 150–200 lb dentro d\'água.'},
+bullseye:{s:'BullsEye',n:'Inclinômetro de bolha (bull\'s eye level)',c:['rov'],v:['anm'],d:'Nível de bolha que mede a inclinação de estruturas no leito marinho. Existe em versão com fluido (ex.: faixa 0–2°) e em versão digital.',f:'Usado em cabeças de poço, estacas, BOPs e outras estruturas submarinas.',r:'Projetado para leitura por câmera de ROV.'},
+sealtest:{s:'Seal Test',n:'Teste de vedação dos selos',c:['bar','rov'],v:['anm'],d:'Verifica a estanqueidade dos selos de um equipamento. Faz parte do FAT (Factory Acceptance Test) dos equipamentos subsea, junto com testes de integridade e funcional.',f:'Na TreeCap, um caminho de fluxo permite testar os selos. Em conectores tipo CVC, o seal test é feito pelo painel de ROV com hot stab (ISO 13628-8).',r:'Use o botão "Teste de vedação da TreeCap" na aba Zoom na ANM.',x:'A sequência animada é genérica e didática. Pressões e critérios seguem o procedimento da operação.'},
+rov:{s:'ROV',n:'Remotely Operated Vehicle',c:['rov'],v:['campo','anm'],d:'Veículo submarino operado remotamente a partir da embarcação de apoio.',f:'Instala, conecta, trava, inspeciona e testa os equipamentos mostrados neste esquema.'},
+rsv:{s:'RSV',n:'ROV Support Vessel',c:['rov'],v:['campo'],d:'Embarcação de apoio a ROV.',f:'Lança e opera o ROV nas atividades de inspeção, manutenção e intervenção.'}
+};
+const _ORDER=['anm','valvulas','bap','th','treecap','corrosao','mlf','clf','mcv','scm','scmmb','imux','mqc','hfl','efl','cfl','sealtest','bullseye','mcs','hpu','epu','tutu','umbilical','suta','sdu','rov','rsv'];
+
+let view='campo', sel=null, filt=null, corr=false, stepIdx=-1, timer=null, seal=0;
+
+
+function tags(c){return c.map(k=>`<span class="qtag" style="color:${CAT[k][1]};border-color:${CAT[k][1]}">${CAT[k][0]}</span>`).join('')}
+function showPanel(id){
+  const p=$('#panel');
+  if(!id||!I[id]){p.innerHTML='<h2>Selecione um equipamento</h2><div class="qnm">Clique em qualquer peça do esquema ou use o Glossário.</div><p>Use os filtros para destacar categorias e o botão <b>Caminho do comando</b> para ver como um comando chega da superfície até a válvula.</p>';return}
+  const o=I[id];
+  p.innerHTML=`<h2>${o.s}</h2><div class="qnm">${o.n}</div>${tags(o.c)}
+  <h3>O que é</h3><p>${o.d}</p><h3>Função</h3><p>${o.f}</p>${o.r?`<h3>Atuação do ROV</h3><p>${o.r}</p>`:''}${o.x?`<div class="qwarn">${o.x}</div>`:''}`;
+}
+function select(id){
+  sel=id; showPanel(id);
+  $$('.qeq').forEach(e=>e.classList.toggle('qsel',e.dataset.id===id));
+  const t=$$('.qeq.qsel').find(e=>e.closest('svg').style.display!=='none');if(t){const st=$('#stage'),a=t.getBoundingClientRect(),b=st.getBoundingClientRect();st.scrollLeft+=a.left+a.width/2-(b.left+b.width/2)}
+}
+function setView(v){
+  view=v;
+  $$('#tabs .tab').forEach(t=>t.classList.toggle('on',t.dataset.v===v));
+  $('#v-campo').style.display=v==='campo'?'block':'none';
+  $('#v-anm').style.display=v==='anm'?'block':'none';
+  $('#bSeal').style.display=v==='anm'?'':'none';
+  $('#bCorr').style.display=v==='anm'?'':'none';
+  
+  applyFilter();
+}
+function applyFilter(){
+  $$('.qeq').forEach(e=>{
+    const o=I[e.dataset.id];
+    e.classList.toggle('qdim',!!filt&&!(o&&o.c.includes(filt)));
+  });
+}
+// chips
+(function(){
+  const c=$('#chips');
+  const all=document.createElement('button');all.className='chip on';all.textContent='Todos';all.onclick=()=>{filt=null;$$('.chip').forEach(x=>x.classList.remove('on'));all.classList.add('on');applyFilter()};c.appendChild(all);
+  Object.entries(CAT).forEach(([k,[n,col]])=>{
+    const b=document.createElement('button');b.className='chip';b.style.color=col;b.textContent=n;
+    b.onclick=()=>{filt=filt===k?null:k;$$('.chip').forEach(x=>x.classList.remove('on'));(filt?b:all).classList.add('on');applyFilter()};
+    c.appendChild(b);
+  });
+})();
+// eventos de clique
+$$('.qeq').forEach(e=>{
+  e.addEventListener('click',()=>select(e.dataset.id));
+  e.addEventListener('keydown',ev=>{if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();select(e.dataset.id)}});
+});
+$$('#tabs .tab').forEach(t=>t.onclick=()=>{stopPath();setView(t.dataset.v)});
+$('#bReset').onclick=()=>{stopPath();select(null);filt=null;$$('.chip').forEach((x,i)=>x.classList.toggle('on',i===0));applyFilter();resetSeal()};
+
+// Caminho do comando
+const STEPS=[
+ {v:'campo',ids:['mcs','hpu','epu'],t:'<b>1. Superfície.</b> O MCS recebe o comando do operador. HPU e EPU fornecem pressão hidráulica e energia.'},
+ {v:'campo',ids:['tutu','umbilical'],t:'<b>2. Umbilical.</b> A TUTU entrega hidráulica, energia e sinal ao umbilical, que desce até o leito.',flow:true},
+ {v:'campo',ids:['suta'],t:'<b>3. SUTA/UTA.</b> O umbilical termina na SUTA, interface submarina que pode distribuir hidráulica e química.'},
+ {v:'campo',ids:['sdu','hfl','efl','cfl'],t:'<b>4. SDU e flying leads.</b> A SDU (ou a própria UTA) redistribui; HFL, EFL e CFL levam hidráulica, energia/comunicação e química até a ANM.'},
+ {v:'anm',ids:['mqc','hfl','efl','cfl'],t:'<b>5. MQC.</b> As placas MQC, travadas por ROV, ligam os flying leads à estrutura da ANM.'},
+ {v:'anm',ids:['scmmb','scm'],t:'<b>6. SCMMB e SCM.</b> O SCM, montado no SCMMB, decodifica o sinal elétrico nos SEMs e comanda os solenoides.'},
+ {v:'anm',ids:['valvulas'],t:'<b>7. Válvulas.</b> O fluido hidráulico direcionado pelo SCM aciona as válvulas da ANM. O status volta à superfície pelo mesmo caminho.'}
+];
+function renderStep(){
+  const s=STEPS[stepIdx];
+  $$('.qeq').forEach(e=>e.classList.remove('qhl'));
+  $('#umbFlow').setAttribute('opacity','0');$('#umbFlow').classList.remove('qflow');
+  if(!s)return;
+  if(view!==s.v)setView(s.v);
+  $$('.qeq').forEach(e=>{const on=s.ids.includes(e.dataset.id);e.classList.toggle('qhl',on);e.classList.toggle('qdim',!on)});
+  if(s.flow){$('#umbFlow').setAttribute('opacity','1');$('#umbFlow').classList.add('qflow')}
+  const box=$('#steps');box.classList.add('on');
+  box.innerHTML=`${s.t}<div class="row" style="margin:8px 0 0"><button class="btn" id="pPrev">◀ Anterior</button><button class="btn pri" id="pNext">${stepIdx===STEPS.length-1?'Concluir':'Próximo ▶'}</button><button class="btn" id="pStop">Parar</button><span style="color:var(--mut);font-size:12px">passo ${stepIdx+1} de ${STEPS.length}</span></div>`;
+  $('#pPrev').onclick=()=>{stepIdx=Math.max(0,stepIdx-1);renderStep()};
+  $('#pNext').onclick=()=>{if(stepIdx===STEPS.length-1){stopPath()}else{stepIdx++;renderStep()}};
+  $('#pStop').onclick=stopPath;
+  select(s.ids[s.ids.length-1]);
+  $$('.qeq').forEach(e=>{if(s.ids.includes(e.dataset.id))e.classList.add('qhl')});
+}
+function stopPath(){
+  stepIdx=-1;$('#steps').classList.remove('on');
+  $$('.qeq').forEach(e=>e.classList.remove('qhl'));
+  $('#umbFlow').classList.remove('qflow');$('#umbFlow').setAttribute('opacity','0');
+  applyFilter();
+}
+$('#bPath').onclick=()=>{filt=null;$$('.chip').forEach((x,i)=>x.classList.toggle('on',i===0));stepIdx=0;if(view!==STEPS[0].v)setView(STEPS[0].v);renderStep()};
+
+// Capa de corrosão
+$('#bCorr').onclick=()=>{
+  corr=!corr;
+  $('#tree').style.display=corr?'none':'';
+  $$('#v-anm .qeq').forEach(e=>{if(['mcv','mlf','clf','scm','scmmb','imux','mqc','hfl','efl','cfl'].includes(e.dataset.id))e.style.display=corr?'none':''});
+  $$('#v-anm .ontree').forEach(e=>e.style.display=corr?'none':'');
+  $('#corrG').style.display=corr?'':'none';
+  $('#bCorr').textContent=corr?'Voltar à ANM instalada':'Poço em abandono temporário (capa de corrosão)';
+  resetSeal();
+  select(corr?'corrosao':'anm');
+};
+// Teste de vedação
+const SEAL=[
+ 'ROV posiciona o hot stab na porta de teste da TreeCap.',
+ 'Pressuriza-se o caminho de teste até a pressão do procedimento.',
+ 'Observa-se a estabilidade da pressão (sem queda = selos estanques).',
+ 'Despressuriza-se, retira-se o hot stab e registra-se o resultado.'
+];
+function resetSeal(){seal=0;$('#bSeal').textContent='Teste de vedação da TreeCap';$('#gauge').classList.remove('on');$('#hotstab').setAttribute('opacity','0');$('#sealHint').textContent=''}
+$('#bSeal').onclick=()=>{
+  if(corr){$('#bCorr').click()}
+  seal=seal>=SEAL.length?0:seal+1;
+  if(seal===0){resetSeal();return}
+  select('sealtest');
+  const g=$('#gauge');g.classList.add('on');
+  g.innerHTML=`<b>Teste de vedação – passo ${seal}/${SEAL.length}</b><br>${SEAL[seal-1]}<br><span style="color:var(--mut);font-size:12px">Sequência didática genérica.</span>`;
+  $('#hotstab').setAttribute('opacity',seal<4?'1':'0');
+  $('#sealHint').textContent=seal===2?'pressurizando…':seal===3?'pressão estável':'';
+  $('#bSeal').textContent=seal>=SEAL.length?'Reiniciar teste':'Próximo passo do teste ▶';
+};
+showPanel(null);
+}});
+
 CH.push({id:'glos',title:'Glossário',lead:'Termos rápidos; digite para filtrar.',render(m){
-const G=[['ANM','Árvore de Natal Molhada: conjunto de válvulas na cabeça do poço no leito marinho.'],['ANMH','ANM horizontal: TH assenta dentro da ANM; válvulas na lateral.'],['BAP','Base Adaptadora de Produção: interface entre cabeça de poço e ANM; recebe MCV/MLF.'],['TH','Tubing Hanger: suspende a coluna de produção e conecta funções (DHSV, PDG).'],['COP','Coluna de produção.'],['DHSV','Downhole Safety Valve: válvula de segurança de fundo (fail-safe-close).'],['MCV','Módulo de Conexão Vertical: conector de linhas (hubs).'],['MLF','Módulo de Linhas Flexíveis (conexão de linhas à BAP).'],['TRT','Tree Running Tool: ferramenta de instalação da ANM.'],['THRT','Tubing Hanger Running Tool.'],['BOP','Blowout Preventer: preventor de erupção.'],['BOPW','BOP de workover.'],['UEP','Unidade Estacionária de Produção (plataforma/FPSO).'],['PLSV','Embarcação de lançamento de linhas.'],['RSV','Embarcação de apoio a ROV.'],['TECOP','Técnico de Operações / supervisor de survey (função).'],['MCS','Master Control Station: estação de comando na UEP.'],['SCM','Subsea Control Module.'],['SEM','Subsea Electronics Module.'],['HPU','Hydraulic Power Unit.'],['EPU','Electrical Power Unit.'],['PLEM','Pipeline End Manifold.'],['PLET','Pipeline End Termination.'],['TPT','Transdutor de pressão e temperatura.'],['PDG','Permanent Downhole Gauge: sensor permanente de fundo.'],['LDA','Lâmina d\'água.'],['Tree cap','Capa da ANM: comando UEP, barreira e back-up.'],['Fail-safe','Falha segura: fecha ao perder pressão.'],['Override','Acionamento manual por ROV que sobrepõe a hidráulica.'],['Wireline / flexitubo','Operações de intervenção por arame / tubo flexível.'],['BCSS','Bombeio centrífugo submerso submarino.'],['Hot stab','Conector hidráulico manipulado pelo ROV.'],['TIAC','Temperatura de início de aparecimento de cristais (parafina).'],['Hidrato','Sólido tipo gelo formado por água + gás sob alta pressão e baixa temperatura.'],['Pig','Dispositivo que percorre a linha para limpar/inspecionar; pig circulante = ida e volta por 2 linhas.'],['Lay-away','Conexão de duto feita durante o lançamento, sem pull-in.'],['RAO','Response Amplitude Operator: resposta da embarcação à onda.'],['DAF','Dynamic Amplification Factor.'],['CTCU','Cable Traction Control Unit (método pendular).'],['WROV / MSROV / OROV','Classes de ROV: trabalho (>1000 kg), médio porte e observação.'],['BCSS','Bombeio centrífugo submerso submarino.'],['MOBO','Módulo de bombeamento em poço falso.'],['VASPS','Separador vertical anular + bombeamento.'],['RWI','Raw Water Injection: injeção de água do mar captada no leito.'],['SCR','Steel Catenary Riser: riser rígido em catenária.'],['TTR','Top Tensioned Riser.'],['UTA','Umbilical Termination Assembly.'],['SDU / EDU','Unidades de distribuição hidráulica/química e elétrica.'],['ILT','In-line tee.'],['MTU','Módulo de terminação de umbilical.'],['EHDM','Módulo de distribuição eletro-hidráulica.'],['TDP','Touch down point do riser.'],['Flexjoint / stress joint','Juntas que reduzem momento no topo/TDP do riser.'],['DPPS','Diagrama polar de posicionamento de sondas (bolha assassina).'],['PSL','Product Specification Level (API 17D).'],['H4','Perfil/conector da cabeça de poço (anel VX).'],['CDH','Caixa de distribuição hidráulica.'],['UEH','Umbilical eletro-hidráulico.'],['Piggyback','ANMs ligadas em série.'],['Spool / jumper rígido','Trecho rígido pré-medido entre dois hubs.']];
+const G=[['TUTU / TUTA','Topside Umbilical Termination Unit/Assembly: terminação do umbilical na UEP.'],['SUTA','Subsea Umbilical Termination Assembly: interface submarina do umbilical; pode distribuir hidráulica e química. Tipicamente UTH, flying leads, HDM e fundação mudmat.'],['HFL / EFL / CFL','Flying leads hidráulico, elétrico (jumper) e químico, instalados por ROV. Existem também SFL (steel) e PFL (power).'],['MQC','Multiple Quick Connect: placa de conexão rápida (stab-plate/J-plate) com acoplamentos hidráulicos, elétricos e ópticos; o ROV trava a placa voadora na fixa.'],['SCMMB','SCM Mounting Base: base que liga o SCM às válvulas da ANM/manifold e aos sensores.'],['IMUX','Módulo eletrônico submarino de comunicação e monitoramento; em especificações Petrobras de ROV aparece como "Inverse Multiplexer". Confirmar no manual do fabricante.'],['CLF','Conector das Linhas de Fluxo da ANM, que trava no MLF. Não confundir com CFL (flying lead químico).'],['Capa de corrosão','Corrosion/debris cap: capa temporária em abandono de poço; protege superfícies de vedação e pode reter inibidor de corrosão, injetado por ROV via hot stab.'],['BullsEye','Inclinômetro de bolha lido pela câmera do ROV; mede a inclinação de cabeças de poço, estacas e BOPs.'],['Seal test','Teste de estanqueidade dos selos (ex.: TreeCap por hot stab).'],['ANM','Árvore de Natal Molhada: conjunto de válvulas na cabeça do poço no leito marinho.'],['ANMH','ANM horizontal: TH assenta dentro da ANM; válvulas na lateral.'],['BAP','Base Adaptadora de Produção: interface entre cabeça de poço e ANM; recebe MCV/MLF.'],['TH','Tubing Hanger: suspende a coluna de produção e conecta funções (DHSV, PDG).'],['COP','Coluna de produção.'],['DHSV','Downhole Safety Valve: válvula de segurança de fundo (fail-safe-close).'],['MCV','Módulo de Conexão Vertical: conector de linhas (hubs).'],['MLF','Módulo de Linhas Flexíveis (conexão de linhas à BAP).'],['TRT','Tree Running Tool: ferramenta de instalação da ANM.'],['THRT','Tubing Hanger Running Tool.'],['BOP','Blowout Preventer: preventor de erupção.'],['BOPW','BOP de workover.'],['UEP','Unidade Estacionária de Produção (plataforma/FPSO).'],['PLSV','Embarcação de lançamento de linhas.'],['RSV','Embarcação de apoio a ROV.'],['TECOP','Técnico de Operações / supervisor de survey (função).'],['MCS','Master Control Station: estação de comando na UEP.'],['SCM','Subsea Control Module.'],['SEM','Subsea Electronics Module.'],['HPU','Hydraulic Power Unit.'],['EPU','Electrical Power Unit.'],['PLEM','Pipeline End Manifold.'],['PLET','Pipeline End Termination.'],['TPT','Transdutor de pressão e temperatura.'],['PDG','Permanent Downhole Gauge: sensor permanente de fundo.'],['LDA','Lâmina d\'água.'],['Tree cap','Capa da ANM: comando UEP, barreira e back-up.'],['Fail-safe','Falha segura: fecha ao perder pressão.'],['Override','Acionamento manual por ROV que sobrepõe a hidráulica.'],['Wireline / flexitubo','Operações de intervenção por arame / tubo flexível.'],['BCSS','Bombeio centrífugo submerso submarino.'],['Hot stab','Conector hidráulico manipulado pelo ROV.'],['TIAC','Temperatura de início de aparecimento de cristais (parafina).'],['Hidrato','Sólido tipo gelo formado por água + gás sob alta pressão e baixa temperatura.'],['Pig','Dispositivo que percorre a linha para limpar/inspecionar; pig circulante = ida e volta por 2 linhas.'],['Lay-away','Conexão de duto feita durante o lançamento, sem pull-in.'],['RAO','Response Amplitude Operator: resposta da embarcação à onda.'],['DAF','Dynamic Amplification Factor.'],['CTCU','Cable Traction Control Unit (método pendular).'],['WROV / MSROV / OROV','Classes de ROV: trabalho (>1000 kg), médio porte e observação.'],['BCSS','Bombeio centrífugo submerso submarino.'],['MOBO','Módulo de bombeamento em poço falso.'],['VASPS','Separador vertical anular + bombeamento.'],['RWI','Raw Water Injection: injeção de água do mar captada no leito.'],['SCR','Steel Catenary Riser: riser rígido em catenária.'],['TTR','Top Tensioned Riser.'],['UTA','Umbilical Termination Assembly.'],['SDU / EDU','Unidades de distribuição hidráulica/química e elétrica.'],['ILT','In-line tee.'],['MTU','Módulo de terminação de umbilical.'],['EHDM','Módulo de distribuição eletro-hidráulica.'],['TDP','Touch down point do riser.'],['Flexjoint / stress joint','Juntas que reduzem momento no topo/TDP do riser.'],['DPPS','Diagrama polar de posicionamento de sondas (bolha assassina).'],['PSL','Product Specification Level (API 17D).'],['H4','Perfil/conector da cabeça de poço (anel VX).'],['CDH','Caixa de distribuição hidráulica.'],['UEH','Umbilical eletro-hidráulico.'],['Piggyback','ANMs ligadas em série.'],['Spool / jumper rígido','Trecho rígido pré-medido entre dois hubs.']];
 const q=mk('<input type="text" placeholder="Buscar termo…">');m.appendChild(q);const g=mk('<div class="grid" style="margin-top:8px"></div>');m.appendChild(g);
 const d=f=>{g.innerHTML='';G.filter(x=>(x.join(' ')).toLowerCase().includes(f.toLowerCase())).forEach(x=>g.appendChild(mk(`<div class="card"><b style="color:var(--acc)">${x[0]}</b><p>${x[1]}</p></div>`)))};q.oninput=()=>d(q.value);d('');
 }});
 
 CH.push({id:'atenc',title:'Pontos de atenção',lead:'Divergências encontradas entre os materiais — verifique no procedimento vigente.',render(m){
 const P=[
+['SDU, SDA, HDM e EDU','O mesmo equipamento de distribuição aparece como SDU, SDA (Subsea Distribution Assembly), HDM ou EDU conforme a especificação. Confira o termo no glossário de bordo.'],
+['IMUX','O uso informado pelo usuário (módulo de comunicação e monitoramento) difere do glossário de ROV da Petrobras, que traz "Inverse Multiplexer". Confirmar no manual do fabricante.'],
+['CFL × CLF','CFL é o flying lead químico; CLF é o conector das linhas de fluxo da ANM. As siglas parecem trocadas e causam erros de leitura.'],
 ['Categorias 5 e 6 dos poços','No manual de notificação da ANP a tabela chama 5 e 6 de “Prospecto mais raso/profundo”, mas as mensagens de validação usam “Jazida mais rasa/profunda”. São a mesma ideia com nomes diferentes.'],
 ['Sufixos de nome de poço','Letras D, H, P, i e a sequência de repetição vêm da Res. ANP 49/2011 (revogada). A Res. 699/2017 tem o texto vigente: confirmar antes de usar em documento oficial.'],
 ['Variação de tração do TTR (heave)','No material de TTR, K = 420 tf/m: heave de 2,0 m dá 840 tf, mas 0,3 m (TLP) é citado como 136 tf; 420 × 0,3 = 126 tf. Possível arredondamento ou erro de slide: conferir.'],
